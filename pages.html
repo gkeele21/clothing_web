@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuLaRoe FB Pages</title>
+    <link rel="stylesheet" href="css/foundation.css">
+    <link rel="stylesheet" href="css/app.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Execute some code here
+        });
+    </script>
+
+</head>
+<body>
+
+<script>
+
+    // This is called with the results from from FB.getLoginStatus().
+    function statusChangeCallback(response) {
+        console.log('statusChangeCallback');
+        console.log(response);
+        // The response object is returned with a status field that lets the
+        // app know the current login status of the person.
+        // Full docs on the response object can be found in the documentation
+        // for FB.getLoginStatus().
+        if (response.status === 'connected') {
+            // Logged into your app and Facebook.
+            console.log('token : ' + response.authResponse.accessToken);
+            populateLogin();
+            displayPages();
+        } else if (response.status === 'not_authorized') {
+            // The person is logged into Facebook, but not your app.
+        } else {
+            // The person is not logged into Facebook, so we're not sure if
+            // they are logged into this app or not.
+        }
+    }
+
+    // This function is called when someone finishes with the Login
+    // Button.  See the onlogin handler attached to it in the sample
+    // code below.
+    function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
+    }
+
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '1665632870397197',
+            cookie     : true,  // enable cookies to allow the server to access
+            // the session
+            xfbml      : true,  // parse social plugins on this page
+            version    : 'v2.8' // use graph api version 2.8
+        });
+
+        FB.AppEvents.logPageView();
+
+        // Now that we've initialized the JavaScript SDK, we call
+        // FB.getLoginStatus().  This function gets the state of the
+        // person visiting this page and can return one of three states to
+        // the callback you provide.  They can be:
+        //
+        // 1. Logged into your app ('connected')
+        // 2. Logged into Facebook, but not your app ('not_authorized')
+        // 3. Not logged into Facebook and can't tell if they are logged into
+        //    your app or not.
+        //
+        // These three cases are handled in the callback function.
+
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
+
+    };
+
+    // Load the SDK asynchronously
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    // Here we run a very simple test of the Graph API after login is
+    // successful.  See statusChangeCallback() for when this call is made.
+    function populateLogin() {
+        console.log('Welcome!  Fetching your information.... ');
+        FB.api('/me', function(response) {
+            console.log('Successful login for: ' + response.name);
+            console.log(response);
+            document.getElementById('userName').innerHTML = response.name;
+        });
+    }
+
+    function displayPages() {
+        FB.api('/me/accounts', function(response) {
+            if (response && !response.error) {
+                var pages = document.getElementById('pages');
+//                pages.innerHTML = "<br />YOUR ADMIN PAGES<br /><br />";
+                console.log('Accounts:');
+                console.log(response.data);
+                console.log('Total:' + response);
+                len = response.data.length;
+                for (var i=0;i < len;i++) {
+                    console.log(response.data[i].name);
+                    pages.innerHTML += "<div class='row'><b>"+response.data[i].name+"</b>&#160;&#160;<a href='albums.html?pageId="+response.data[i].id+"'><button type='button' class='success button tiny'>View Albums</button></a></div>";
+
+//                    if (response.data[i].id == '327106007341220') {
+//                        displayAlbums(response.data[i].access_token);
+//                    }
+                }
+            }
+        })
+    }
+
+    function displayAlbums(token) {
+        FB.api('/327106007341220/albums', function(response) {
+            if (response && !response.error) {
+                var albums = document.getElementById('albums');
+                albums.innerHTML = "<br />PHOTO ALBUMS<br /><br />";
+                console.log('Albums');
+                console.log(response.data);
+                len = response.data.length;
+                for (var i=0;i < len;i++) {
+                    console.log(response.data[i].name);
+                    albums.innerHTML += "<div class='row'><b>"+response.data[i].name+"yyy</b></div>";
+
+                }
+            }
+        })
+
+//        uploadPhoto(token);
+
+//        FB.api('/10212169835586685/permissions/pages_show_list', 'delete', function(response) {
+//            if (response && !response.error) {
+//                console.log("Success");
+//            } else {
+//                console.log("Error removing permission");
+//                console.log(response);
+//            }
+//        })
+    }
+
+    function fbLogoutUser() {
+//        FB.getLoginStatus(function(response) {
+//            if (response && response.status === 'connected') {
+//                FB.logout(function(response) {
+//                    document.location.reload();
+//                });
+//            }
+//        });
+    }
+
+    function uploadPhoto(token) {
+        console.log("Uploading Photo...");
+        FB.api('/1402850949766715/photos', 'post', {
+            url: 'https://theswintons.files.wordpress.com/2015/05/nta7qmvavpaayuklpim3.jpg?w=938&h=394',
+            access_token: token,
+            message: 'Testing 123'
+        }, function(response) {
+            if (response && !response.error) {
+                console.log("Success");
+                console.log(response);
+            } else {
+                console.log("Error");
+                console.log(response.error);
+            }
+        })
+    }
+
+</script>
+
+
+<!-- Start Top Bar -->
+<div class="top-bar">
+    <div class="row">
+        <div class="top-bar-left">
+            <ul class="dropdown menu" data-dropdown-menu>
+                <li class="menu-text">PostMyRoe</li>
+                <li class="has-submenu">
+                    <a href="#">FB Pages</a>
+                    <!--<ul class="submenu menu vertical" data-submenu>
+                        <li><a href="#">One</a></li>
+                        <li><a href="#">Two</a></li>
+                        <li><a href="#">Three</a></li>
+                    </ul>-->
+                </li>
+                <!--<li><a href="#">Two</a></li>
+                <li><a href="#">Three</a></li>-->
+            </ul>
+        </div>
+
+        <div class="top-bar-right">
+            <span id="userName"></span>
+        </div>
+    </div>
+</div>
+<!-- End Top Bar -->
+<br>
+<!-- You can now combine a row and column if you just need a 12 column row -->
+<div class="row columns">
+    <nav aria-label="You are here:" role="navigation">
+        <ul class="breadcrumbs">
+            <li><a href="home.html">Home</a></li>
+            <li>
+                <span class="show-for-sr">Current: </span> FB Pages
+            </li>
+
+            <!--<li><a href="#">Features</a></li>
+            <li class="disabled">Gene Splicing</li>
+            <li>
+                <span class="show-for-sr">Current: </span> FB Pages
+            </li>-->
+        </ul>
+    </nav>
+</div>
+
+<div class="small-9 medium-5 small-centered columns">
+    <div class="row">
+        <h3>Your FB Admin Pages</h3>
+        <span id="pages"></span>
+    </div>
+</div>
+
+<div class="row column">
+    <hr>
+    <ul class="menu">
+        <li>PostMyRoe</li>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="float-right">Copyright 2017</li>
+    </ul>
+</div>
+
+</body>
+</html>
